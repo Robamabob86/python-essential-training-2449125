@@ -1,0 +1,141 @@
+# =====================================================================
+#  The Beep Test - AI Race Commentator : settings
+#  Edit this file in Notepad. Lines starting with # are comments.
+#  After changing anything, just restart the commentator.
+# =====================================================================
+
+channel_name: "The Beep Test"
+
+# What the commentator calls you. Leave blank to use your iRacing name.
+driver_name: ""
+# How the commentator refers to you: "he/him", "she/her" or "they/them"
+driver_pronouns: "he/him"
+
+commentator:
+  # Who's on the mic: "pro" (calm-but-excited Sky F1 style lead commentator)
+  # or "cheeky" (sarcastic British pundit who roasts you, but is on your side)
+  personality: cheeky
+
+  # Seconds of silence after a line finishes before the next normal line.
+  cooldown_seconds: 8
+
+  # Events at or above this priority may interrupt the cooldown
+  # (priorities: 100 finish, 90 incident, 80 overtake/lost place,
+  #  75 race start, 70 final lap, 60 battles, 50 pits, 45 PB, 40 slow lap, 10 colour)
+  cooldown_bypass_priority: 70
+  # ...but even then, always leave at least this many seconds between lines
+  min_gap_seconds: 2.5
+
+  # If a line isn't ready to play within this many seconds of the moment
+  # it describes, it is thrown away (stops stale, out-of-date commentary)
+  max_line_age_seconds: 4.0
+
+  # How many previous lines the AI remembers (stops repeats, allows callbacks)
+  memory_lines: 10
+
+  # Colour commentary when nothing has happened for a while
+  quiet_period_seconds: 45
+
+llm:
+  # Claude model used to write the lines. claude-opus-5-5 gives the best
+  # writing. If lines often arrive too late (you'll see "skipped: stale" in
+  # the console) try "claude-haiku-5-5", which is much faster and cheaper.
+  model: claude-opus-5-5
+  # How hard the model thinks: low is fastest and plenty for a one-liner.
+  effort: low
+  max_tokens: 1024
+  # Seconds to wait for the AI before giving up on this line
+  timeout_seconds: 6
+  # If the AI is unreachable (no internet, no key) use built-in canned lines
+  use_fallback_lines: true
+
+tts:
+  # "edge" (free Microsoft neural voices) or "elevenlabs" (paid, most natural)
+  engine: edge
+
+  edge:
+    # Energetic British male voices: en-GB-RyanNeural, en-GB-ThomasNeural
+    # (others: en-GB-SoniaNeural, en-GB-LibbyNeural, en-GB-MaisieNeural)
+    voice: en-GB-RyanNeural
+    # Baseline delivery, added to the per-event settings below
+    base_rate: "+8%"     # speed, e.g. "+10%" or "-5%"
+    base_pitch: "+0Hz"   # pitch, e.g. "+5Hz"
+    base_volume: "+0%"
+
+  elevenlabs:
+    # API key goes in .env as ELEVENLABS_API_KEY
+    voice_id: "JBFqnCBsd6RMkjVDRZzb"   # any voice id from your ElevenLabs library
+    model_id: eleven_multilingual_v2
+    # Low stability + high style = the most expressive, excitable delivery
+    stability: 0.3
+    similarity_boost: 0.8
+    style: 0.75
+    use_speaker_boost: true
+    speed: 1.08
+
+  # Split lines on "..." and " - " and add real pauses there (build-up!)
+  dramatic_pauses: true
+  ellipsis_pause_ms: 350
+  dash_pause_ms: 150
+
+  # Per-event delivery. rate/pitch are ADDED to the base values above.
+  # pause_before_ms adds a beat of silence before the line starts.
+  # (Anything not listed uses "default".)
+  prosody:
+    default:        { rate: "+0%",  pitch: "+0Hz",  volume: "+0%",  pause_before_ms: 0 }
+    race_start:     { rate: "+12%", pitch: "+6Hz",  volume: "+10%", pause_before_ms: 0 }
+    final_lap:      { rate: "+8%",  pitch: "+4Hz",  volume: "+5%",  pause_before_ms: 150 }
+    position_gained: { rate: "+14%", pitch: "+8Hz", volume: "+10%", pause_before_ms: 0 }
+    position_lost:  { rate: "+6%",  pitch: "+2Hz",  volume: "+5%",  pause_before_ms: 0 }
+    battle_ahead:   { rate: "+6%",  pitch: "+3Hz",  volume: "+0%",  pause_before_ms: 0 }
+    under_pressure: { rate: "+6%",  pitch: "+3Hz",  volume: "+0%",  pause_before_ms: 0 }
+    incident:       { rate: "+4%",  pitch: "+2Hz",  volume: "+5%",  pause_before_ms: 100 }
+    personal_best:  { rate: "+10%", pitch: "+5Hz",  volume: "+5%",  pause_before_ms: 0 }
+    slow_lap:       { rate: "-2%",  pitch: "-2Hz",  volume: "+0%",  pause_before_ms: 0 }
+    pit_entry:      { rate: "+0%",  pitch: "+0Hz",  volume: "+0%",  pause_before_ms: 0 }
+    pit_exit:       { rate: "+4%",  pitch: "+2Hz",  volume: "+0%",  pause_before_ms: 0 }
+    chequered_flag: { rate: "+12%", pitch: "+8Hz",  volume: "+10%", pause_before_ms: 200 }
+    colour:         { rate: "-4%",  pitch: "-2Hz",  volume: "-5%",  pause_before_ms: 0 }
+
+audio:
+  # Which speakers / virtual cable the commentator talks through.
+  # Use part of the name shown in the device list at start-up, e.g.
+  # "CABLE Input" for VB-Audio Virtual Cable. Leave blank for your default.
+  output_device: "CABLE Input"
+  # Commentator loudness, 0.0 - 1.0
+  volume: 0.9
+  # Also play through your normal speakers/headphones so YOU hear it.
+  # Leave false if you monitor the cable in OBS instead (see README).
+  also_play_on_default: false
+
+ducking:
+  # Turn the iRacing game volume down while the commentator speaks (Windows)
+  enabled: false
+  # Game volume while ducked (0.0 - 1.0)
+  duck_to: 0.35
+  # Name of the game process to duck
+  process_name: iRacingSim64DX11.exe
+
+hotkeys:
+  enabled: true
+  mute_toggle: "ctrl+shift+m"
+  force_line: "ctrl+shift+l"
+
+logging:
+  # Every spoken line is written here with timestamps (for editing / Shorts)
+  folder: logs
+  # Also save each spoken line as a .wav clip next to the log
+  save_audio_clips: false
+
+detection:
+  poll_hz: 10
+  # "Battle building": gap under this many seconds...
+  battle_gap_seconds: 1.0
+  # ...and it closed by at least this much over the last 10 seconds
+  battle_closing_seconds: 0.4
+  # Don't repeat battle calls for the same car more often than this
+  battle_repeat_seconds: 40
+  # Lap counts as "much slower" if this % slower than your average clean lap
+  slow_lap_percent: 7
+  # A position change must hold for this long before it's called
+  position_settle_seconds: 1.2
